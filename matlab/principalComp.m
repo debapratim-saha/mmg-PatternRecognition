@@ -1,6 +1,9 @@
 function [reducedMatrix,principalEigVec]=principalComp(featureMatrix)
 covarMatrix=cov(featureMatrix);
-[eVec,eVal]=eigs(covarMatrix);
+[eVec,eVal]=eigs(covarMatrix,10);
 
-reducedMatrix = transpose(eVec(:,1:2))*transpose(featureMatrix);
 principalEigVec = eVec(:,1:2);
+reducedMatrix = transpose(principalEigVec)*transpose(featureMatrix);
+
+% principalEigVec = eVec();
+% reducedMatrix = transpose(principalEigVec)*transpose(featureMatrix);
