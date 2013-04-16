@@ -3,6 +3,7 @@ numberOfFeatures=19;
 
 % Load raw data
 %[data,group]=someRandomData();
+initSystem; 
 [trainData,group,testData] = loadMmgData();
 
 % Generate feature matrix from the data above
