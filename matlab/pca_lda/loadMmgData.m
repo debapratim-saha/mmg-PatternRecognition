@@ -434,7 +434,7 @@ thumb12_32 = transpose(thumb12_32);
 
 trainingData = [thumb12_5;thumb12_3;thumb12_7;thumb12_1;thumb12_9;thumb12_11;
                 thumb12_2;thumb12_8;thumb12_4;thumb12_6;thumb12_10;thumb12_12];
-testData = [thumb12_17];
+testData = [thumb12_24];
 
 %Define the groups for the data
 group=[1;1;1;1;1;1;
