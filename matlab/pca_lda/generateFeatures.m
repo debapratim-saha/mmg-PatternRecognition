@@ -1,7 +1,7 @@
 function [A_feature] = generateFeatures(A)
 %This function generates all the features considered for the current
 %problem and bundles all of them in a row vector
-%Number of features considered now = 12
+%Number of features considered now = 19
 
 A_immg=sum(abs(A));                     %Integrated abs MMG amplitude
 A_mean=mean(abs(A));                    %Mean of abs amplitude

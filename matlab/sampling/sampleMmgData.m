@@ -4,8 +4,8 @@ sampleLength = length(timeSeriesData);
 t=linspace(0,(1/fs)*sampleLength,sampleLength);
 
 %Define the sample window 
-sampleWindowLen = 0.4;                          %Lenght of time for each sample (in seconds)
-sampleWinDistance = 0.4;                        %Distance between each sample (in seconds)
+sampleWindowLen = 0.7;                          %Lenght of time for each sample (in seconds)
+sampleWinDistance = 0.5;                        %Distance between each sample (in seconds)
 sampleSize = sampleWindowLen * fs;              %Total number of data points in one sample
 sampleMinDist = sampleWinDistance * fs;         %Total number of data points betweek each window
 
@@ -50,7 +50,7 @@ globEventPointer=zeros(k,4);
 sampleBegin=1;    maxThisValue=0; maxThisIndex=0;    
 loopCounter=0;    thisSampleSpan=zeros(k,5);
 m=1;j=1;
-while sampleBegin<k-1
+while sampleBegin<k
     loopCounter = loopCounter+1 ;
     if abs(localEventStart(sampleBegin,1)-localEventStart(sampleBegin+1,1))<sampleSize                              %If there is more than one energy peak in current locality, then sampleBegin~=sampleEnd
         if maxWinEnergy(localEventStart(sampleBegin,1))>maxWinEnergy(localEventStart(sampleBegin+1,1)) 
@@ -81,7 +81,7 @@ while sampleBegin<k-1
         maxThisIndex=1; sampleEnd=sampleBegin;
         
         thisSampleSpan(loopCounter,:)=[sampleBegin,sampleEnd,localEventStart(sampleBegin)/fs,localEventStart(sampleEnd)/fs,maxThisValue];
-        if maxThisValue>0.1             %since there is a single energy peak in locality, it should be a big one as compared to the other case
+        if maxThisValue>0.05             %since there is a single energy peak in locality, it should be a big one as compared to the other case
             globEventPointer(m,1:3)=[localEventStart((maxThisIndex+sampleBegin-1),1),maxThisValue,loopCounter];             %sampleBegin is added because the function "max" returns the index wrt "sampleBegin:sampleEnd"
             m=m+1;                                                                                                          
         end
@@ -104,9 +104,10 @@ postPeakDist=postPeakDuration*fs;                               %Post peak durat
 for i=1:m-1
     eventPeakPoint=globEventPointer(i,1);
     eventStart=eventPeakPoint-prePeakDist;
-    eventEnd=eventPeakPoint+postPeakDist;
+    eventEnd=eventPeakPoint+postPeakDist-1;
     
     eventSample=timeSeriesData(eventStart:eventEnd,1);
-    filename=strcat(scriptFolderPath,'sample_',num2str(i),'_',num2str(globEventPointer(i,3)),'.wav');
+    %filename=strcat(scriptFolderPath,'sample_',num2str(i),'_',num2str(globEventPointer(i,3)),'.wav');
+    filename=strcat(scriptFolderPath,'sample_',num2str(i),'.wav');
     wavwrite(eventSample,fs,nbits,filename);
 end

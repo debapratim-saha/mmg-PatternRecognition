@@ -2,11 +2,10 @@
 numberOfFeatures=19;
 
 % Load raw data
-%[data,group]=someRandomData();
-[trainData,group,testData] = loadMmgData();
+loadMmgData;
 
 % Generate feature matrix from the data above
-trainFeatureMatrix = genFeatureMatrix(trainData,size(trainData,1),numberOfFeatures);
+trainFeatureMatrix = genFeatureMatrix(trainingData,size(trainingData,1),numberOfFeatures);
 testFeatureMatrix = genFeatureMatrix(testData,size(testData,1),numberOfFeatures);
 
 %Generate the mean adjusted featureMatrix
