@@ -33,9 +33,10 @@ covMatGr_2 = meanCorrected_groupMat_2*transpose(meanCorrected_groupMat_2)/(n(2)-
 %prior = [n1/n;n2/n];
 prior = 1/groupCount;
 
-%for i=1:size(testData,1)-1
-    %Get the principal components of the testData
+%for i=1:size(testData,1)
     i=1;
+    
+    %Get the principal components of the testData
     testDataReducedFeatures = transpose(principalEigVec)*transpose(testFeatureMatrix(i,:));
 
     %Predict the class for a new data by evaluating the value of discriminant function at the given point

@@ -9,7 +9,7 @@ generalPCA
 %Count the number of elements in each group 
 n=zeros(groupCount+1,1);
 for i=1:groupCount
-    n(i) = sum(group==i);      %Count elements in group i
+    n(i) = sum(group==mod(i,groupCount));      %Count elements in group i
 end
 n(groupCount+1) = sum(n);
     
@@ -43,17 +43,23 @@ covMatGr_4 = meanCorrected_groupMat_4*transpose(meanCorrected_groupMat_4)/(n(4)-
 %prior = [n1/n;n2/n];
 prior = 1/groupCount;
 
-%Get the principal components of the testData
-testDataReducedFeatures = transpose(principalEigVec)*transpose(testFeatureMatrix);
+%Evaluate the test points one-by-one
+result=zeros(size(testData,1),2);
+for i=1:size(testData,1)
+%     i=1;
+    %Get the principal components of the testData
+    testDataReducedFeatures = transpose(principalEigVec)*transpose(testFeatureMatrix(i,:));
 
-%Predict the class for a new data by evaluating the value of discriminant function at the given point
-%The discrim function has to be evaluated at x=<new data point> (whose definition is present in loadMmgData.m)
-discrimFunc(1) =  log(prior)-0.5*(transpose(testDataReducedFeatures - groupMatrix_1_Mean)/covMatGr_1)*(testDataReducedFeatures - groupMatrix_1_Mean) - 0.5*log(det(covMatGr_1));
-discrimFunc(2) =  log(prior)-0.5*(transpose(testDataReducedFeatures - groupMatrix_2_Mean)/covMatGr_2)*(testDataReducedFeatures - groupMatrix_2_Mean) - 0.5*log(det(covMatGr_2));
-discrimFunc(3) =  log(prior)-0.5*(transpose(testDataReducedFeatures - groupMatrix_3_Mean)/covMatGr_3)*(testDataReducedFeatures - groupMatrix_3_Mean) - 0.5*log(det(covMatGr_3));
-discrimFunc(4) =  log(prior)-0.5*(transpose(testDataReducedFeatures - groupMatrix_4_Mean)/covMatGr_4)*(testDataReducedFeatures - groupMatrix_4_Mean) - 0.5*log(det(covMatGr_4));
+    %Predict the class for a new data by evaluating the value of discriminant function at the given point
+    %The discrim function has to be evaluated at x=<new data point> (whose definition is present in loadMmgData.m)
+    discrimFunc(1) =  log(prior)-0.5*(transpose(testDataReducedFeatures - groupMatrix_1_Mean)/covMatGr_1)*(testDataReducedFeatures - groupMatrix_1_Mean) - 0.5*log(det(covMatGr_1));
+    discrimFunc(2) =  log(prior)-0.5*(transpose(testDataReducedFeatures - groupMatrix_2_Mean)/covMatGr_2)*(testDataReducedFeatures - groupMatrix_2_Mean) - 0.5*log(det(covMatGr_2));
+    discrimFunc(3) =  log(prior)-0.5*(transpose(testDataReducedFeatures - groupMatrix_3_Mean)/covMatGr_3)*(testDataReducedFeatures - groupMatrix_3_Mean) - 0.5*log(det(covMatGr_3));
+    discrimFunc(4) =  log(prior)-0.5*(transpose(testDataReducedFeatures - groupMatrix_4_Mean)/covMatGr_4)*(testDataReducedFeatures - groupMatrix_4_Mean) - 0.5*log(det(covMatGr_4));
 
-%Display the index of the max of Discriminant value which represents the
-%group which evaluates to highest value
-[maxValue,maxIndex]=max(discrimFunc);
-disp(maxIndex)
+    %Display the index of the max of Discriminant value which represents the
+    %group which evaluates to highest value
+    [maxValue,maxIndex]=max(discrimFunc);
+    result(i,:)=[testData(i,30870+1),maxIndex];
+%     disp(maxIndex)
+end
