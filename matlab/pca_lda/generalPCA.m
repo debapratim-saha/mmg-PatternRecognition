@@ -6,7 +6,7 @@ loadMmgData;
 
 % Generate feature matrix from the data above
 trainFeatureMatrix = genFeatureMatrix(trainingData,size(trainingData,1),numberOfFeatures,numberChannels);
-testFeatureMatrix = genFeatureMatrix(testData(:,1:30870,:),size(testData,1),numberOfFeatures,numberChannels);
+testFeatureMatrix = genFeatureMatrix(testData(:,1:sampleSize,:),size(testData,1),numberOfFeatures,numberChannels);
 
 %Generate the mean adjusted featureMatrix
 meanAdjFeatureMatrix=trainFeatureMatrix - repmat(mean(trainFeatureMatrix),size(trainFeatureMatrix,1),1);

@@ -1,4 +1,4 @@
-function [A_feature] = generateFeatures(A)
+function [A_feature_final] = generateFeatures(A)
 %This function generates all the features considered for the current
 %problem and bundles all of them in a row vector
 %Number of features considered now = 19 and Number of Channels = 2
@@ -34,7 +34,7 @@ newFeatureMatrix=zeros(nSamp,nFeatPerCh*nCh);
 for i=1:nCh
     newFeatureMatrix(:,(nFeatPerCh*(i-1)+1):nFeatPerCh*i)=A_feature(:,:,i);
 end
-A_feature=newFeatureMatrix;
+A_feature_final=newFeatureMatrix;
 
 
 function [zc]=zeroCrossing(A)
@@ -71,7 +71,7 @@ function [wa]=wilsonAmp(A)
 nCh=size(A,3);wa=zeros(1,1,nCh);count=0;
 for i=1:nCh
     for j=1:(size(A,2)-1)
-        if((abs(A(1,j,i)-A(1,j+1,i))<0.05) && (abs(A(1,j,i)-A(1,j+1,i))>=0.00005))    %Change these values as per need. As of now, these are arbitrary values.
+        if((abs(A(1,j,i)-A(1,j+1,i))<0.005) && (abs(A(1,j,i)-A(1,j+1,i))>=0.001))    %Change these values as per need. As of now, these are arbitrary values.
             count=count+1;
         end
     end 

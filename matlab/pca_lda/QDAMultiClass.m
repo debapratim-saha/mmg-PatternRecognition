@@ -3,6 +3,13 @@
 %FOR MORE COMPREHENSIVE DESCRIPTION ON DISCRIMINANT ANALYSIS, VISIT THE WEBSITE -
 %https://onlinecourses.science.psu.edu/stat857/node/17
 
+progDisp = 1;
+
+%Setup the progress bar 
+if progDisp
+    h = waitbar(0,'Computing RMS features...');
+end
+
 %Perform the PCA on the MMG data to reduce the dimensionality of the data
 generalPCA
 
@@ -44,22 +51,35 @@ covMatGr_4 = meanCorrected_groupMat_4*transpose(meanCorrected_groupMat_4)/(n(4)-
 prior = 1/groupCount;
 
 %Evaluate the test points one-by-one
-result=zeros(size(testData,1),2);
-for i=1:size(testData,1)
-%     i=1;
+testCount=size(testData,1);
+result=zeros(testCount,2);
+for i=1:testCount
     %Get the principal components of the testData
     testDataReducedFeatures = transpose(principalEigVec)*transpose(testFeatureMatrix(i,:));
 
     %Predict the class for a new data by evaluating the value of discriminant function at the given point
     %The discrim function has to be evaluated at x=<new data point> (whose definition is present in loadMmgData.m)
-    discrimFunc(1) =  log(prior)-0.5*(transpose(testDataReducedFeatures - groupMatrix_1_Mean)/covMatGr_1)*(testDataReducedFeatures - groupMatrix_1_Mean) - 0.5*log(det(covMatGr_1));
-    discrimFunc(2) =  log(prior)-0.5*(transpose(testDataReducedFeatures - groupMatrix_2_Mean)/covMatGr_2)*(testDataReducedFeatures - groupMatrix_2_Mean) - 0.5*log(det(covMatGr_2));
-    discrimFunc(3) =  log(prior)-0.5*(transpose(testDataReducedFeatures - groupMatrix_3_Mean)/covMatGr_3)*(testDataReducedFeatures - groupMatrix_3_Mean) - 0.5*log(det(covMatGr_3));
-    discrimFunc(4) =  log(prior)-0.5*(transpose(testDataReducedFeatures - groupMatrix_4_Mean)/covMatGr_4)*(testDataReducedFeatures - groupMatrix_4_Mean) - 0.5*log(det(covMatGr_4));
+    discrimFunc(1) =  log(prior)-0.5*(transpose(testDataReducedFeatures - groupMatrix_1_Mean)/covMatGr_1)...
+                        *(testDataReducedFeatures - groupMatrix_1_Mean) - 0.5*log(det(covMatGr_1));
+    discrimFunc(2) =  log(prior)-0.5*(transpose(testDataReducedFeatures - groupMatrix_2_Mean)/covMatGr_2)...
+                        *(testDataReducedFeatures - groupMatrix_2_Mean) - 0.5*log(det(covMatGr_2));
+    discrimFunc(3) =  log(prior)-0.5*(transpose(testDataReducedFeatures - groupMatrix_3_Mean)/covMatGr_3)...
+                        *(testDataReducedFeatures - groupMatrix_3_Mean) - 0.5*log(det(covMatGr_3));
+    discrimFunc(4) =  log(prior)-0.5*(transpose(testDataReducedFeatures - groupMatrix_4_Mean)/covMatGr_4)...
+                        *(testDataReducedFeatures - groupMatrix_4_Mean) - 0.5*log(det(covMatGr_4));
 
     %Display the index of the max of Discriminant value which represents the
     %group which evaluates to highest value
     [maxValue,maxIndex]=max(discrimFunc);
-    result(i,:)=[testData(i,30870+1),maxIndex];
+    result(i,:)=[testData(i,sampleSize+1),maxIndex];
 %     disp(maxIndex)
+
+    %update Progress bar
+    if progDisp
+       waitbar(i/testCount,h);
+    end
+end
+
+if progDisp
+    close(h)
 end
