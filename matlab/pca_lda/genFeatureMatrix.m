@@ -9,9 +9,3 @@ function [featureMatrix]=genFeatureMatrix(A,numberSamples,numberFeatures,numberC
  for i=1:numberSamples
     featureMatrix(i,:)=generateFeatures(A(i,:,:));
  end
-
-%Convert the eventSample matrix in the following format-
-%row=sample->number,        || This has to be done to make sure the date 
-%column=sample->data,       || lies in a format that is easily understood
-%depth=sample->channel
-%featureMatrix=permute(featureMatrix,[3 2 1]);

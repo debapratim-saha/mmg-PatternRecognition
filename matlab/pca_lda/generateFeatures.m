@@ -17,6 +17,7 @@ A_ssc=slopeSignChange(A);
 A_wilson=wilsonAmp(A);
 A_rms=rms(A);
 A_logrms=log(A_rms);
+A_wlen=wlen(A);
 
 %Calculate the 7th order AR coefficients for all channels
 A_ar7_coeff=zeros(1,7,nCh);
@@ -24,9 +25,13 @@ for i=1:nCh
     A_ar7=ar(A(:,:,i),7);                          %Autoregression coeffs order 7 for channel i
     A_ar7_coeff(1,:,i)=A_ar7.a(2:8);
 end
+
+%Calculate cepstrum coefficient from AR coeff
+
     
 %% Final FEATURE_MATRIX for the input matrix 
-A_feature=[A_immg A_mean A_mad A_var A_sd A_kurt A_skew A_zc A_ssc A_wilson A_rms A_logrms A_ar7_coeff];
+% A_feature=[A_immg A_mean A_mad A_var A_sd A_kurt A_skew A_zc A_ssc A_wilson A_rms A_logrms A_ar7_coeff];
+ A_feature=[A_immg A_mad A_var A_zc A_wilson A_rms A_ar7_coeff A_wlen];
 nSamp=size(A_feature,1);
 nFeatPerCh=size(A_feature,2);
 nCh=size(A_feature,3);
@@ -71,10 +76,19 @@ function [wa]=wilsonAmp(A)
 nCh=size(A,3);wa=zeros(1,1,nCh);count=0;
 for i=1:nCh
     for j=1:(size(A,2)-1)
-        if((abs(A(1,j,i)-A(1,j+1,i))<0.005) && (abs(A(1,j,i)-A(1,j+1,i))>=0.001))    %Change these values as per need. As of now, these are arbitrary values.
+        if((abs(A(1,j,i)-A(1,j+1,i))<0.05) && (abs(A(1,j,i)-A(1,j+1,i))>=0.000005))    %Change these values as per need. As of now, these are arbitrary values. [Should be >=0.001]
             count=count+1;
         end
     end 
     wa(1,1,i)=count;
     count=0;
 end
+
+function [wflen]=wlen(A)
+%This function calculates the waveform length of the given MMG sample using
+%the formula wlen=sum(|x(i)-x(i-1)|)
+nCh=size(A,3);wflen=zeros(1,1,nCh);
+for i=1:nCh
+   wflen(1,1,i)=sum(abs(diff(A(:,:,i))));
+end
+

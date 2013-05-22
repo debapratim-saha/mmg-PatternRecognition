@@ -1,5 +1,5 @@
 %Total Features considered in this data analysis
-numberOfFeatures=19;
+numberOfFeatures=14;
 
 % Load raw data
 loadMmgData;
