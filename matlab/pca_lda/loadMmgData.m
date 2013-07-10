@@ -11,13 +11,13 @@ sampleSize=4800;
 groupCount=4;
 
 %Sample Description 
-totalSamples=48; 
+totalSamples=44; 
 
 %Initialise the sample root addresse
 rootPath= 'E:\VIRGINIA TECH STUDIES\DISIS-GA\WII-GLOVE\Microphone DATA\At Forearm\';
 
 %Address to the folder containing the time series
-tseriesFolder='Thumb30\';
+tseriesFolder='Thumb27\';
 
 %Address to the folder where each sample is stored
 sampleFolder='using_script\';
@@ -51,8 +51,7 @@ trainDataIndices=[1;5;9;13;17;21;
                   2;6;10;14;18;22;
                   3;7;11;15;19;23;
                   4;8;12;16;20;24];
-    
-
+              
 group=[1;1;1;1;1;1;
        2;2;2;2;2;2;
        3;3;3;3;3;3;
@@ -77,3 +76,20 @@ while eventIndex <= totalSamples
     end
     eventIndex=eventIndex+1;
 end
+
+%Count the number of elements in each group 
+numGrSamples=zeros(groupCount+1,1);
+for i=1:groupCount
+    numGrSamples(i) = sum(group==mod(i,groupCount));      %Count elements in group i
+end
+numGrSamples(groupCount+1) = sum(numGrSamples);
+
+%Define the extents of each of the groups in the training data set
+gr1=1:numGrSamples(1);
+gr2=numGrSamples(1)+1:numGrSamples(1)+numGrSamples(2);
+gr3=numGrSamples(1)+numGrSamples(2)+1:numGrSamples(1)+numGrSamples(2)+numGrSamples(3);
+gr4=numGrSamples(1)+numGrSamples(2)+numGrSamples(3)+1:numGrSamples(groupCount+1);
+
+%Define the prior for the experiment. It should mostly be 0.5 because both the groups are equally probable.
+%prior = [n1/n;n2/n];
+prior = 1/groupCount;
