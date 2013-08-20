@@ -11,19 +11,29 @@ sampleSize=4800;
 groupCount=4;
 
 %Sample Description 
-totalSamples=44; 
+totalSamples=36; 
+
+% %Initialise the sample root addresse
+% rootPath= 'E:\VIRGINIA TECH STUDIES\DISIS-GA\WII-GLOVE\Microphone DATA\At Forearm\';
+% 
+% %Address to the folder containing the time series
+% tseriesFolder='Thumb27\';
 
 %Initialise the sample root addresse
-rootPath= 'E:\VIRGINIA TECH STUDIES\DISIS-GA\WII-GLOVE\Microphone DATA\At Forearm\';
+rootPath= 'E:\VIRGINIA TECH STUDIES\DISIS-GA\WII-GLOVE\Microphone DATA\At Forearm\USER\UserC\';
 
 %Address to the folder containing the time series
-tseriesFolder='Thumb27\';
+tseriesFolder='Sample3\';
 
 %Address to the folder where each sample is stored
 sampleFolder='using_script\';
 
 %Address to the folder containing results
 resultFolder='results\';
+
+%Read one sample to store the frequency and nbits for the project
+%Reading one sample is enough cos all other samples possess the same property
+[y,Fs,nbits]=wavread(strcat(rootPath,tseriesFolder,sampleFolder,'sample_1.wav'));
 
 %Read the samples into a matrix with format -
 %row=sample->channel,       || This has to be done because matlab always
@@ -47,10 +57,10 @@ eventSample=permute(eventSample,[3 2 1]);
 %                   19;20;21;22;23;24];
 
 %Define trainData
-trainDataIndices=[1;5;9;13;17;21;
-                  2;6;10;14;18;22;
-                  3;7;11;15;19;23;
-                  4;8;12;16;20;24];
+trainDataIndices=[9;13;17;21;29;33;
+                  10;14;18;22;30;34;
+                  11;15;19;23;31;35;
+                  12;16;20;24;32;36];
               
 group=[1;1;1;1;1;1;
        2;2;2;2;2;2;

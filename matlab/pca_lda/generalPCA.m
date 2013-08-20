@@ -1,12 +1,12 @@
 %Total Features considered in this data analysis
-numberOfFeatures=14;
+numberOfFeatures=16;
 
 % Load raw data and its corresponding groups for training and test data
 loadMmgData;
 
 % Generate feature matrix from the data above
-trainFeatureMatrix = genFeatureMatrix(trainingData,size(trainingData,1),numberOfFeatures,numberChannels);
-testFeatureMatrix = genFeatureMatrix(testData(:,1:sampleSize,:),size(testData,1),numberOfFeatures,numberChannels);
+trainFeatureMatrix = genFeatureMatrix(trainingData,size(trainingData,1),numberOfFeatures,numberChannels,Fs,sampleSize);
+testFeatureMatrix = genFeatureMatrix(testData(:,1:sampleSize,:),size(testData,1),numberOfFeatures,numberChannels,Fs,sampleSize);
 
 %Generate the mean adjusted featureMatrix
 meanAdjFeatureMatrix=trainFeatureMatrix - repmat(mean(trainFeatureMatrix),size(trainFeatureMatrix,1),1);
@@ -18,7 +18,7 @@ assignFisherScore;
 [sortedFisherScore,sortedFisherIndex]= sort(fisherScoreMatrix,2,'descend');
 
 %Select the top discriminatory features
-nReducedFeat = 14;
+nReducedFeat = 2;
 fisherReducedTrainMatrix = zeros(size(trainFeatureMatrix,1),nReducedFeat);
 fisherReducedTestMatrix = zeros(size(testFeatureMatrix,1),nReducedFeat);
 for i=1:nReducedFeat

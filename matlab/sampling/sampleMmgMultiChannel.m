@@ -18,7 +18,7 @@ sampleEnergy = timeSeriesData.^2;
 for i=1:numChannels
     subplot(numChannels,1,i);
     plot(t,timeSeriesData(:,i));
-    grid on; hold all;
+    grid on; hold all;xlabel('Time (s)');ylabel('Amplitude (Normalised to 5V)');
     plot(t,sampleEnergy(:,i));
 end
 tic;
@@ -55,7 +55,7 @@ for j=1:numChannels
 end
 
 %Plot the maxWinEnergy over actual signal
-%localEventStart(:,3:4,:)=localEventStart(:,1:2,:)/fs;
+localEventStart(:,3:4,:)=localEventStart(:,1:2,:)/fs;
 for i=1:numChannels
     subplot(numChannels,1,i);
     hold all;
@@ -84,7 +84,7 @@ for i=1:numChannels
                 [maxThisValue,maxThisIndex]=max(localEventStart(sampleBegin:sampleEnd,2,i));  
 
                 thisSampleSpan(loopCounter,:,i)=[sampleBegin,sampleEnd,localEventStart(sampleBegin,1,i)/fs,localEventStart(sampleEnd,1,i)/fs,maxThisValue];
-                if maxThisValue>0.04
+                if maxThisValue>0.04            %orig=0.04, might need to be changed to 0.05 for userC
                     globEventPointer(m(i),:,i)=[localEventStart((maxThisIndex+sampleBegin-1),1,i),maxThisValue,loopCounter];             %sampleBegin is added because the function "max" returns the index wrt "sampleBegin:sampleEnd"
                     m(i)=m(i)+1;                                                                                                          
                 end

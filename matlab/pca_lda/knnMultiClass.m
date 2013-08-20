@@ -1,5 +1,5 @@
 %Fit the knn model to training data
-knnModel = ClassificationKNN.fit(transpose(reducedFeatureMatrix),group,'NumNeighbors',5);
+knnModel = ClassificationKNN.fit(transpose(reducedFeatureMatrix),group,'NumNeighbors',8);
 
 %Predict the class of test data points
 testReducedMatrix=transpose(principalEigVec)*transpose(fisherReducedTestMatrix);

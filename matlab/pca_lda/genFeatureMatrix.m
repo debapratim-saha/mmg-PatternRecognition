@@ -1,4 +1,4 @@
-function [featureMatrix]=genFeatureMatrix(A,numberSamples,numberFeatures,numberChannels)
+function [featureMatrix]=genFeatureMatrix(A,numberSamples,numberFeatures,numberChannels,Fs,sampleSize)
 %% This function forms the feature matrix from the given data matrix A
 
 % First form the matrix in the following format -
@@ -7,5 +7,5 @@ function [featureMatrix]=genFeatureMatrix(A,numberSamples,numberFeatures,numberC
 %depth=sample->number
  featureMatrix=zeros(numberSamples,numberFeatures*numberChannels);
  for i=1:numberSamples
-    featureMatrix(i,:)=generateFeatures(A(i,:,:));
+    featureMatrix(i,:)=generateFeatures(A(i,:,:),Fs,sampleSize);
  end
