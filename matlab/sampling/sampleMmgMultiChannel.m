@@ -26,7 +26,7 @@ tic;
 windowEnergy = zeros(sampleLength,numChannels);
 for j=1:numChannels
     for i=1:sampleLength
-        if abs(timeSeriesData(i,j))>0.025 && i+sampleSize<sampleLength
+        if abs(timeSeriesData(i,j))>0.03 && i+sampleSize<sampleLength       %orginially 0.025; changed for U1S7
     %         for j=0:sampleSize
     %             windowEnergy(i,:) = windowEnergy(i,:) + sampleEnergy(i+j,:);
     %         end
@@ -66,7 +66,7 @@ end
 
 %Detect Unique Global Event Pointers from the Local Events detected earlier
 globEventPointer=zeros(max(k),3,numChannels);    
-thisSampleSpan=zeros(max(k),5,numChannels);
+thisSampleSpan=zeros(max(k),6,numChannels);
 m=ones(numChannels,1);
 for i=1:numChannels
     sampleBegin=1;    maxThisValue=0; maxThisIndex=0;    
@@ -83,8 +83,8 @@ for i=1:numChannels
                 sampleEnd=sampleEnd-1;                                     
                 [maxThisValue,maxThisIndex]=max(localEventStart(sampleBegin:sampleEnd,2,i));  
 
-                thisSampleSpan(loopCounter,:,i)=[sampleBegin,sampleEnd,localEventStart(sampleBegin,1,i)/fs,localEventStart(sampleEnd,1,i)/fs,maxThisValue];
-                if maxThisValue>0.04            %orig=0.04, might need to be changed to 0.05 for userC
+                thisSampleSpan(loopCounter,:,i)=[sampleBegin,sampleEnd,localEventStart(sampleBegin,1,i)/fs,localEventStart(sampleEnd,1,i)/fs,maxThisValue,maxThisIndex];
+                if maxThisValue>0.02            %orig=0.04, might need to be changed to 0.05 for userC,0.03 for userASample3,0.02 for userDs3
                     globEventPointer(m(i),:,i)=[localEventStart((maxThisIndex+sampleBegin-1),1,i),maxThisValue,loopCounter];             %sampleBegin is added because the function "max" returns the index wrt "sampleBegin:sampleEnd"
                     m(i)=m(i)+1;                                                                                                          
                 end
@@ -101,8 +101,8 @@ for i=1:numChannels
             maxThisValue=localEventStart(sampleBegin,2,i);
             maxThisIndex=1; sampleEnd=sampleBegin;
 
-            thisSampleSpan(loopCounter,:,i)=[sampleBegin,sampleEnd,localEventStart(sampleBegin,1,i)/fs,localEventStart(sampleEnd,1,i)/fs,maxThisValue];
-            if maxThisValue>0.04             %since there is a single energy peak in locality, it should be a big one as compared to the other case
+            thisSampleSpan(loopCounter,:,i)=[sampleBegin,sampleEnd,localEventStart(sampleBegin,1,i)/fs,localEventStart(sampleEnd,1,i)/fs,maxThisValue,maxThisIndex];
+            if maxThisValue>0.02             %since there is a single energy peak in locality, it should be a big one as compared to the other case
                 globEventPointer(m(i),:,i)=[localEventStart((maxThisIndex+sampleBegin-1),1,i),maxThisValue,loopCounter];             %sampleBegin is added because the function "max" returns the index wrt "sampleBegin:sampleEnd"
                 m(i)=m(i)+1;                                                                                                          
             end
@@ -132,13 +132,19 @@ for i=1:max(m)
             unifiedGlobEventPointer(i,:)  =   globEventPointer(i,1:2,minTimeIndex);
         end
     else
-        %Case where one of the channels do not have sufficient energy for
-        %this particular event
-        [minTime,minTimeIndex]  =   min(globEventPointer(i,1,:));
-        [maxTime,maxTimeIndex]  =   max(globEventPointer(i,1,:));
-        unifiedGlobEventPointer(i,:)  =   globEventPointer(i,1:2,minTimeIndex);
-        globEventPointer(i:max(k),:,maxTimeIndex)=[[0 0 0];globEventPointer(i:(max(k)-1),:,maxTimeIndex)];        
-    end       
+        %Case where individual channel events dont correspond to same actual event i.e.
+        %one of the channels do not have sufficient energy for this particular event
+        if ~any(globEventPointer(i,1,:)==0)                                %checking whether both the channels have valid data (i.e. not [0 0 0]) to compare min and max times
+            [minTime,minTimeIndex]  =   min(globEventPointer(i,1,:));
+            [maxTime,maxTimeIndex]  =   max(globEventPointer(i,1,:));
+            unifiedGlobEventPointer(i,:)  =   globEventPointer(i,1:2,minTimeIndex);
+            globEventPointer(i:max(k),:,maxTimeIndex)=[[0 0 0];globEventPointer(i:(max(k)-1),:,maxTimeIndex)];        %shift the other channel peak pointers by one place
+        else
+            %case where one of the channels' last event related data has been considered and only [0 0 0] are left further, then no further min or max checking should be done
+            [maxTime,maxTimeIndex]  =   max(globEventPointer(i,1,:));
+            unifiedGlobEventPointer(i,:)  =   globEventPointer(i,1:2,maxTimeIndex);
+        end   
+    end
 end
 toc
 
@@ -153,7 +159,7 @@ prePeakDuration=0.05;                                           %Pre peak durati
 prePeakDist=prePeakDuration*fs;                                 %Pre peak duration in data points
 postPeakDuration=sampleWindowLen - prePeakDuration;             %Post peak duration in 's' 
 postPeakDist=postPeakDuration*fs;                               %Post peak duration in data points
-for i=1:max(m)-1   %for sample#26 - have to delete this "-1" TODO: find reason
+for i=1:max(m)-1   %for sample#26 and U1S3,U4S4 - have to delete this "-1" TODO: find reason
     eventPeakPoint=unifiedGlobEventPointer(i,1);
     eventStart=eventPeakPoint-prePeakDist;
     eventEnd=eventPeakPoint+postPeakDist-1;

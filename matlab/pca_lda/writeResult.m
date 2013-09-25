@@ -1,8 +1,14 @@
 %This file contains the command to write the "result" variable in CSV
 %format to the the custom filename at the path (rootPath\tseriesFolder\resultFolder)
-resultFolderPath=strcat(rootPath,tseriesFolder,resultFolder);
-if exist(resultFolderPath,'dir')
+if exist(resultPath,'dir')
 else
-    mkdir(resultFolderPath);
+    mkdir(resultPath);
 end
-csvwrite(strcat(resultFolderPath,strcat('results_pca',num2str(size(principalEigVec,2)),'_19feat.dat')),result);
+switch resultWriteVar
+    case 'QDA'
+        csvwrite(strcat(resultPath,strcat('results_fisher',num2str(nFisherReducedFeat),'_pca',num2str(nPcaReducedFeat),'_feat',num2str(numberOfFeatures),'_samples',num2str(totalSamples),'.dat')),loocvResult);
+    case 'KNN'
+        csvwrite(strcat(resultPath,strcat('knnresults_k',num2str(knn),'_fisher',num2str(nFisherReducedFeat),'_pca',num2str(nPcaReducedFeat),'_feat',num2str(numberOfFeatures),'_samples',num2str(totalSamples),'.dat')),loocvResultKnn);
+    otherwise
+        csvwrite(strcat(resultPath,'results'));
+end

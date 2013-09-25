@@ -1,13 +1,12 @@
+function [result,loocvResult]=QDAMultiClass(loocv,testIndices,loocvTestCount,loocvResult,totalSamples,groupCount,samplePath,resultPath,nFisherReducedFeat,nPcaReducedFeat,numberOfFeatures)
 %This script is a multiclass classifier using QDA of the data whose           
 %dimensionality is already reduced by using PCA                             
 %FOR MORE COMPREHENSIVE DESCRIPTION ON DISCRIMINANT ANALYSIS, VISIT THE WEBSITE -
 %https://onlinecourses.science.psu.edu/stat857/node/17
 
-progDisp = 1;
-
 %Perform the PCA on the MMG data to reduce the dimensionality of the data
 generalPCA
-   
+
 %Decompose reducedFeatureMatrix into the individual group matrices
 groupFeatMatrix_1 = reducedFeatureMatrix(:,gr1);                    %gr1 is the extent of group1 in training data defined in loadMmgData
 groupFeatMatrix_2 = reducedFeatureMatrix(:,gr2);                    %gr2 is the extent of group2 in training data defined in loadMmgData
@@ -34,16 +33,12 @@ covMatGr_2 = meanCorrected_groupMat_2*transpose(meanCorrected_groupMat_2)/(numGr
 covMatGr_3 = meanCorrected_groupMat_3*transpose(meanCorrected_groupMat_3)/(numGrSamples(3)-1);
 covMatGr_4 = meanCorrected_groupMat_4*transpose(meanCorrected_groupMat_4)/(numGrSamples(4)-1);
 
-%Setup the progress bar 
-if progDisp
-    h = waitbar(0,'Computing Discriminant Function for each sample ...');
-end
 
 %Evaluate the test points one-by-one
 testCount=size(testData,1);
 result=zeros(testCount,2);
 for i=1:testCount
-    %Get the principal components of the testData
+    %Get the principal components of the testData after pre-screening by assiging Fisher Score to each feature
     testDataReducedFeatures = transpose(principalEigVec)*transpose(fisherReducedTestMatrix(i,:));
 
     %Predict the class for a new data by evaluating the value of discriminant function at the given point
@@ -56,15 +51,9 @@ for i=1:testCount
     %Display the index of the max of Discriminant value which represents the
     %group which evaluates to highest value
     [maxValue,maxIndex]=max(discrimFunc);
-    result(i,:)=[testData(i,sampleSize+1),maxIndex];
-%     disp(maxIndex)
-
-    %update Progress bar
-    if progDisp
-       waitbar(i/testCount,h);
+    result(i,:)=[testData(i,sampleSize+1),mod(maxIndex,groupCount)];
+    if loocv==1
+        loocvResult(loocvTestCount,:)=result(i,:);
     end
 end
 
-if progDisp
-    close(h)
-end
