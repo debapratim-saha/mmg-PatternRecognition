@@ -1,4 +1,4 @@
-function dataMatrix=realTimePlot(duration)
+function dataMatrixOut=realTimePlot(duration)
 %% This function plots realtime graph of the data available on serial port; 
 %  "Duration" should be a number
 
@@ -21,7 +21,7 @@ function dataMatrix=realTimePlot(duration)
     %from the creation of serial object until this point
     flushinput(serialPortThis);                         
     
-    %send "start\n" to start the arduino ADC and sending data
+    %sync with the arduino by sending and receiving a token data
     flag=1;
     while(flag~=0)
         fprintf(serialPortThis,'%s',char('s'));
@@ -29,7 +29,8 @@ function dataMatrix=realTimePlot(duration)
         %disp('flag')
         %disp(flag)
     end
-    disp('out of while loop')
+    disp('Voila! In sync with Arduino.')           %confirms that it is in sync with Arduino
+    
     %start async reading
     readasync(serialPortThis);
     tic;
@@ -46,10 +47,10 @@ function dataMatrix=realTimePlot(duration)
     end
     toc
     
-    dataMatrix=dataMatrix';
+    dataMatrixOut=dataMatrix';
     ylim([0 5.5]);
     iteration=1:1:duration;
-    plot(iteration,dataMatrix(:,1));
+    plot(iteration,dataMatrixOut(:,1));
     stopasync(serialPortThis);fclose(serialPortThis); delete(serialPortThis); clear serialPortThis;
 end
 

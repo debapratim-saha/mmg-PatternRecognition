@@ -2,7 +2,7 @@ clear all;
 progDisp = 1;
 
 %Sample Description 
-totalSamples=40; 
+totalSamples=44; 
 
 %Number of groups in data
 groupCount=4;
@@ -11,13 +11,13 @@ groupCount=4;
 numberOfFeatures=16;
 
 %Define the number of Fisher Reduced Features
-nFisherReducedFeat = 32;
+nFisherReducedFeat = 4;
 
 %Define the number of PCA Reduced Features
 nPcaReducedFeat = 4;
 
 %Initialise the sample root addresse
-rootPath= 'E:\VIRGINIA TECH STUDIES\DISIS-GA\WII-GLOVE\Microphone DATA\Users Study\USER\UserB\Sample2\';
+rootPath= 'E:\VIRGINIA TECH STUDIES\DISIS-GA\WII-GLOVE\Microphone DATA\Users Study\USER\UserD\Sample2\';
 
 %Address to the folder where each sample is stored
 samplePath=strcat(rootPath,'using_script\');
@@ -29,16 +29,17 @@ resultPath=strcat(rootPath,'results\');
 loocv = 1;
 
 %Setup the progress bar for each k 
-if progDisp
-    h2 = waitbar(0,'Performing PR for various k = 1 to 10');
-end
+% if progDisp
+%     h2 = waitbar(0,'Performing PR for various k = 1 to 10');
+% end
 
-for k=1:10
-    %Define the number of nearest neighbors
-    if k~=8
-        knn = k;
-    end
+% for k=1:10
+%     %Define the number of nearest neighbors
+%     if k~=8
+%         knn = k;
+%     end
 
+knn=3;
     %Setup the progress bar for each k 
     if progDisp
         h1 = waitbar(0,'Learning and Testing for each sample ...');
@@ -58,7 +59,7 @@ for k=1:10
     %Close the progress bar object h1 and update h2
     if progDisp
         close(h1)
-        waitbar(k/10,h2);
+        %waitbar(k/10,h2);
     end
 
     groupCountCorrect=zeros(totalSamples/groupCount,1);
@@ -71,6 +72,6 @@ for k=1:10
 
     resultWriteVar='KNN';
     writeResult;
-end
-
-close(h2)
+% end
+% 
+% close(h2)
