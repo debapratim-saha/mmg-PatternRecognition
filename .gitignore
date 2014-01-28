@@ -163,4 +163,4 @@ pip-log.txt
 .DS_Store
 
 # Brennon's ignored stuff
-matlab/data
+matlab/automation/using_script
