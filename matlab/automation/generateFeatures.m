@@ -52,8 +52,10 @@ function [featHandles] = generateFeatures(A,Fs,sampleSize)
     %Calculate the 7th order AR coefficients for all channels
         A_ar7_coeff=zeros(1,7,nCh);
         for i=1:nCh
-            arN=ar(A(:,:,i),7);                          %Autoregression coeffs order 7 for channel i
-            A_ar7_coeff(1,:,i)=arN.a(2:8);
+%             arN=ar(A(:,:,i),7);                          %Autoregression coeffs order 7 for channel i
+            arN = arburg(A(:,:,i) , 7);
+%             A_ar7_coeff(1,:,i)=arN.a(2:8);
+            A_ar7_coeff(1,:,i)=arN(2:8);
         end
     end
 
