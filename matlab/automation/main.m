@@ -1,6 +1,6 @@
 function prediction=main(testSample)
 
-    path=strcat(pwd,'\using_script\');
+    path = [pwd filesep 'using_script' filesep];
 
     trMat   ={'sample_1';'sample_5';'sample_9';'sample_13';'sample_17';
               'sample_2';'sample_6';'sample_10';'sample_14';'sample_18';
@@ -12,11 +12,12 @@ function prediction=main(testSample)
               3;3;3;3;3;
               4;4;4;4;4;];
 	
-    %Read the train samples
-    trN=length(trMat);
-    trSample=zeros(trN,60,2);
-    for i=1:trN
-        rawSigTr=wavread(strcat(path,trMat{i},'.wav'));
+    % Read the train samples
+    trN = length(trMat);
+    trSample = zeros(trN, 60, 2);
+    
+    for i = 1:trN
+        rawSigTr = wavread([path trMat{i} '.wav']);
         trSample(i,:,:)=downsample(rawSigTr,80);        
     end
     
