@@ -164,3 +164,8 @@ pip-log.txt
 
 # Brennon's ignored stuff
 matlab/automation/using_script
+
+# Deba's ignore rules
+matlab/automation_bkup
+matlab/automation/using_script_orig
+matlab/automation/reading
