@@ -105,8 +105,7 @@ function mmgGRpipeline()
         end
 
         % Get the sample window from job_buf for which status is 0(or undone)
-        if job_fifo(end,3)==0                   
-            if job_fifo(end,1)~=0 && job_fifo(end,2)~=0     % because job_fifo is initialised to [0,0]
+        if job_fifo(end,3)==0 && job_fifo(end,1)~=0 && job_fifo(end,2)~=0     % because job_fifo is initialised to [0,0]
                 currentTestSample(1,:,:) = timeSeriesData(job_fifo(end,1):job_fifo(end,2),:);
 
                 % Predict for the current job
@@ -118,7 +117,6 @@ function mmgGRpipeline()
                 
                 % Update the status of the current job
                 job_fifo(end,3)=1;          % Job done
-            end
         end
             
         if size(job_fifo,1)>1

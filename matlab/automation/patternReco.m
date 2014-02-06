@@ -1,14 +1,28 @@
-function [prediction,classifier_Handles]=patternReco(timeSeriesData,trWindowLimits,trGrp,testSample)
+function [prediction,classifier_Handles]=patternReco(trDataParent,trWindowLimits,trGrp,trDataProprty,testSample)
         
     % Return the handles to the classifiers
     classifier_Handles={@trainClassifier; @testClassifier};
 
-    %% If no argument, assume a default sample to check the classifier
-    if nargin<4
+    %% ARGUEMENT PARSING 
+    % If no argument, assume a default sample to check the classifier
+    if nargin<5
         testSample='sample_21';
-        prediction=nan;
+        prediction=nan;        
         
-        if nargin<3
+            % Extract the training window samples
+            trN = size(trWindowLimits,1);
+            trSample = zeros(trN,60,2);
+            for i=1:trN
+                switch trDataProprty
+                    case 'limits'
+                        trSample(i,:,:) = trDataParent(trWindowLimits(i,1):trWindowLimits(i,2),:);
+                    case 'dataVec'
+                        trSample(i,:,:) = trDataParent{i,1};
+                end
+            end
+        
+        
+        if nargin<4
             % Define the training samples and their groups
             path = [pwd filesep 'using_script' filesep];
 
@@ -28,15 +42,7 @@ function [prediction,classifier_Handles]=patternReco(timeSeriesData,trWindowLimi
             trGrp   =[1;1;1;1;1;
                       2;2;2;2;2;
                       3;3;3;3;3;
-                      4;4;4;4;4;];
-        
-        else
-            % Extract the training window samples
-            trN = size(trWindowLimits,1);
-            trSample = zeros(trN,60,2);
-            for i=1:trN
-                trSample(i,:,:) = timeSeriesData(trWindowLimits(i,1):trWindowLimits(i,2),:);
-            end
+                      4;4;4;4;4;];        
         end
         
     end
@@ -45,15 +51,6 @@ function [prediction,classifier_Handles]=patternReco(timeSeriesData,trWindowLimi
     
     % Train the model
     [model,pEigVec]=trainClassifier(trSample,trGrp);
-    
-%     % Read the test samples
-%     rawSigTst=wavread(strcat(path,testSample));
-%     teSample(1,:,:)=downsample(rawSigTst,80);
-% 
-%     tic;
-%     prediction = testClassifier(teSample);
-%     toc
-
     
     function [model,pEigVec]=trainClassifier(trSample,trGrp)
         Fs=100;

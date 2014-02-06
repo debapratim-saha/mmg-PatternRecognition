@@ -83,7 +83,7 @@ function start_audio_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
     setappdata(0, 'IsProcessingAudio', 1);    
     if strcmp(handles.InputMode, 'File')
-        good_frames = process_input(handles.SelectedFilePath);
+        [good_frames] = process_input(handles.SelectedFilePath);
     else
         process_input;
     end
