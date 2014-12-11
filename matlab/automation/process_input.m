@@ -1,4 +1,4 @@
-function [good_frames,trData] = process_input(varargin)
+function [good_frames] = process_input(varargin)
 % PROCESS_INPUT
 %      [good_frames] = PROCESS_INPUT returns the number of good frames
 %      identified by PROCESS_INPUT, which takes as input live data from the
@@ -41,6 +41,8 @@ function [good_frames,trData] = process_input(varargin)
     % Number of training samples required
     nTrSamples = 20;
     
+    fprintf('Training Phase begins...\n Please provide %d training samples with %d for each class.\n',nTrSamples,nTrSamples/4);
+    
     % Setup buffers for use in `extract_window`
     raw = zeros(70,2);
     power = zeros(70,2);
@@ -62,11 +64,11 @@ function [good_frames,trData] = process_input(varargin)
     % Setup the loop counter
     loopCounter=0;
     
-    IsProcessingAudio = 1;
-    while IsProcessingAudio==1
+%     IsProcessingAudio = 1;
+%     while IsProcessingAudio==1
 %     While IsProcessingAudio == 1
     % This is set in `main_gui`
-%     while getappdata(0, 'IsProcessingAudio')
+    while getappdata(0, 'IsProcessingAudio')
         % Increment the loopcounter
         loopCounter = loopCounter+1;
         
@@ -93,7 +95,7 @@ function [good_frames,trData] = process_input(varargin)
         % If end of frame reached, increment the good frame counter and append in job fifo
         if  sinceStart>=65 
             % Increment frame counter
-            good_frames = good_frames + 1
+            good_frames = good_frames + 1;
 
             % Setup complete Current frame data
             superFrame(1:15,:) = raw(end-14:end,:);
@@ -102,6 +104,7 @@ function [good_frames,trData] = process_input(varargin)
             if good_frames<=nTrSamples
                 % Append train data in trData
                 trData(good_frames,:)={superFrame};
+                fprintf('Training Sample Number - %d\n',good_frames);
             else
                 % Append test data in job fifo
                 job_fifo=[{superFrame 0};job_fifo(1:end,:)];
@@ -119,7 +122,7 @@ function [good_frames,trData] = process_input(varargin)
                  % Train the classifier
                 [~,classifier_Handles]=patternReco(trData,trData,trGrp,'dataVec');
                 
-                disp('Training End')
+                fprintf('Training End\n');
             end
             
             % Reset since start
@@ -139,11 +142,11 @@ function [good_frames,trData] = process_input(varargin)
             
             % Predict for the current job
             prediction = classifier_Handles{2}(currentTestSample);
-            disp(prediction)
+            fprintf('Current Recognised Gesture Class is - %d\n',prediction)
 
             % Update the status of the current job
             job_fifo(end,2)={1};          % Job done
-%             fprintf('Time taken for prediction of one job is %d \n',toc(t2));
+            % fprintf('Time taken for prediction of one job is %d \n',toc(t2));
         end
             
         if size(job_fifo,1)>1
