@@ -9,7 +9,12 @@ The system works by first detecting MMG signal by a moving window energy detecto
 a set of 14 statistical features (see below for a list) are computed from the window. PCA is used for orthogonalizing the features while 
 reducing the feature count by keeping features that represent 95\% of the variance in the data. These reduced feature sets are passed 
 through machine learning algorithms to train the system at train-time. At test-time, a class of gesture is predicted in real-time as seen 
-in the [video](https://www.youtube.com/watch?v=YouJtJQiOmU).
+in the video below:
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=YouJtJQiOmU
+" target="_blank"><img src="http://img.youtube.com/vi/YouJtJQiOmU/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
+
 
 ### Feature Extraction
 The code for statistical feature extraction from Mechanomyography time-series data is avaiable in 
